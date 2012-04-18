@@ -17,17 +17,16 @@ class Client:
 		self.key = key
 		self.secret = secret
   		self.connection = httplib.HTTPConnection(server, port)
-    	self.consumer = oauth.OAuthConsumer(key, secret)
+		self.consumer = oauth.OAuthConsumer(key, secret)
+		
 	def _request(self, method, url_path, request_body = False):
 		request = oauth.OAuthRequest.from_consumer_and_token(self.consumer, http_method=method, http_url="http://%s:%d%s" % (self.server, self.port, url_path))
 		request.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(), self.consumer, None)
 		headers = request.to_header()
-		
 		if(request_body):
 			self.connection.request(request.http_method, url, headers=headers, body=request_body)
 		else:
 			self.connection.request(request.http_method, url, headers=headers)
-		
 		return self.connection.getresponse()
 
 	def get(self, path):
